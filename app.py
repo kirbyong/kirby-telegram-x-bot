@@ -35,17 +35,15 @@ logger.info("X API initialized")
 # Handle Telegram Updates
 @bot.channel_post_handler(content_types=['text'])
 def handle_channel_post(message):
-logger.info(f"Received channel post from chat ID: {message.chat.id}, message: {message.text}")
-
-if str(message.chat.id) == os.getenv('CHAT_ID'):
-    post_text = f"New update from my Telegram channel: {message.text}"
-    try:
-        x_api.update_status(post_text)
-        logger.info(f"Posted to X: {post_text}")
-    except Exception as e:
-        logger.error(f"Error posting to X: {e}")
-else:
-    logger.warning("Chat ID does not match; message ignored.")
+    if str(message.chat.id) == os.getenv('CHAT_ID'):
+        post_text = f"New update from my Telegram channel: {message.text}"
+        try:
+            x_api.update_status(post_text)
+            logger.info(f"Posted to X: {post_text}")
+        except Exception as e:
+            logger.error(f"Error posting to X: {e}")
+    else:
+        logger.info(f"Received channel post from chat ID: {message.chat.id}, message: {message.text}")
 
 # Flask Route for Telegram Webhook
 @app.route('/webhook', methods=['POST'])
